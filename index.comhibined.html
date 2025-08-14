@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FriendTimeKeeper</title>
+<meta name="theme-color" content="#0b101c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+:root{
+  --bg:#0b101c; --card:#0f1726; --card2:#0e1a2c; --text:#eaf1ff; --muted:#9fb0d1;
+  --border:rgba(255,255,255,.12); --primary:#2188ff; --danger:#ef4444;
+}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+/* Header */
+.header{position:sticky;top:0;z-index:10;background:#0c1426f0;backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.2px}
+.brand img{width:28px;height:28px;border-radius:10px;border:1px solid var(--border)}
+.actions{display:flex;gap:8px}
+.btn{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 14px;border-radius:14px;border:1px solid var(--border);background:#13233d;color:var(--text);
+  font-weight:700;cursor:pointer;touch-action:manipulation}
+.btn.primary{background:linear-gradient(180deg,#2992ff,#1f7adf);border:none}
+.btn.danger{background:linear-gradient(180deg,#ef4444,#dc2626);border:none}
+.btn.ghost{background:#0f1726}
+/* Layout */
+.page{padding:12px 14px;display:grid;gap:14px;max-width:880px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:14px}
+.h1{font-weight:800;margin:0 0 6px;font-size:18px}.sub{color:var(--muted);font-size:13px}
+.list{display:grid;gap:10px}
+.friend{display:grid;grid-template-columns:1fr auto;gap:10px;padding:12px;border:1px solid var(--border);border-radius:16px;background:var(--card2)}
+.name{font-weight:900}.badge{display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:#0f1728;font-size:12px}
+.pill{display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid var(--border);font-size:12px}
+.pok{background:rgba(16,185,129,.95);color:#031a12}.pwarn{background:rgba(245,158,11,.95);color:#3b2502}.pno{background:rgba(239,68,68,.95);color:#3b0606}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.input,select{width:100%;padding:14px;border-radius:14px;border:1px solid var(--border);background:#0f1726;color:var(--text)}
+.grid2{display:grid;gap:10px;grid-template-columns:1fr} @media(min-width:720px){.grid2{grid-template-columns:1fr 1fr}}
+/* TZ chooser */
+.tabrow{display:flex;gap:8px;margin-top:4px}
+.tab{flex:1;text-align:center;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#0f1726;font-weight:700}
+.tab.active{background:#1a2a46}
+.selectWrap{border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.filterBox{padding:8px;border-bottom:1px solid var(--border);background:#0d1729}
+.filterBox input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0a1322;color:#eaf1ff}
+.selectBox{padding:8px;max-height:240px;overflow:auto;background:#0f1726}
+.selectBox select{width:100%;height:220px;background:#0f1726;color:#eaf1ff;border:none}
+/* Install */
+.install{position:sticky;bottom:0;z-index:12;background:#0c1222f2;border-top:1px solid var(--border);padding:10px 14px;display:none;gap:10px;align-items:center;justify-content:space-between}
+/* Settings modal - blocky */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:40}
+.sheet{max-width:640px;width:100%;background:#0f1726;border:1px solid var(--border);border-radius:18px;box-shadow:0 10px 40px rgba(0,0,0,.5);padding:14px}
+.sheet h3{margin:0 0 8px;font-size:18px}
+.blockgrid{display:grid;gap:10px;grid-template-columns:1fr} @media(min-width:640px){.blockgrid{grid-template-columns:1fr 1fr}}
+.block{background:#0e1a2c;border:1px solid var(--border);border-radius:14px;padding:12px}
+.block h4{margin:0 0 6px}
+.block label{display:flex;gap:8px;align-items:center;margin:6px 0}
+.footer{color:var(--muted);font-size:12px;text-align:center;padding:12px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="hrow">
+    <div class="brand"><img id="appIcon" src="icon-192.png" alt=""> FriendTimeKeeper</div>
+    <div class="actions">
+      <button id="shareBtn" class="btn ghost">Share</button>
+      <button id="settingsBtn" class="btn ghost">Settings</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="card">
+    <div class="h1">Your Friends</div>
+    <div class="sub">Mobile cards • Stored on your device</div>
+    <div id="friends" class="list" style="margin-top:8px"></div>
+  </div>
+
+  <div class="card">
+    <div class="h1">Add Friend</div>
+    <div class="grid2" style="margin-top:6px">
+      <input id="name" class="input" placeholder="Name (e.g., Sam)">
+      <div>
+        <div class="tabrow">
+          <div id="tabBrowse" class="tab active">Browse timezones</div>
+          <div id="tabManual" class="tab">Type manually</div>
+        </div>
+        <div id="paneBrowse">
+          <div class="selectWrap">
+            <div class="filterBox"><input id="tzFilter" placeholder="Filter (e.g., Sydney, London, Tokyo)"></div>
+            <div class="selectBox">
+              <select id="tzSelect" size="10"></select>
+            </div>
+          </div>
+        </div>
+        <div id="paneManual" style="display:none;margin-top:8px">
+          <input id="tzManual" class="input" placeholder="Type a zone (e.g., Australia/Brisbane)">
+        </div>
+      </div>
+      <input id="notes" class="input" placeholder="Notes: city, platform, etc.">
+      <button id="addBtn" class="btn primary">Add</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="h1">Planner</div>
+    <div class="sub">Pick friends & find 60‑min overlaps (next 24h).</div>
+    <div class="grid2" style="margin-top:8px">
+      <select id="multi" class="input" multiple style="min-height:160px"></select>
+      <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr">
+        <input id="awakeStart" class="input" type="time" value="08:00">
+        <input id="awakeEnd" class="input" type="time" value="22:00">
+        <button id="planBtn" class="btn">Find Overlaps</button>
+      </div>
+    </div>
+    <div id="plan" style="margin-top:8px"></div>
+  </div>
+
+  <div class="footer">Created by <strong>@Shade_Kn1ght</strong> • Your timezone: <span id="myTZ"></span></div>
+</div>
+
+<div id="installBar" class="install">
+  <div class="sub">Install FriendTimeKeeper for full‑screen & offline</div>
+  <button id="installBtn" class="btn primary">Install</button>
+</div>
+
+<!-- Settings modal -->
+<div id="settingsModal" class="modal">
+  <div class="sheet">
+    <h3>Settings</h3>
+    <div class="blockgrid">
+      <div class="block">
+        <h4>Timezone list</h4>
+        <label><input type="radio" name="tzmode" value="simplified"> Simplified (popular zones)</label>
+        <label><input type="radio" name="tzmode" value="complete"> Complete (all zones)</label>
+      </div>
+      <div class="block">
+        <h4>Appearance</h4>
+        <label>App icon style:
+          <select id="iconStyle" class="input" style="margin-top:6px">
+            <option value="classic">Classic clock hands</option>
+            <option value="digital">Digital clock</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button id="closeSettings" class="btn">Close</button>
+      <button id="saveSettings" class="btn primary">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// SW + install
+if('serviceWorker' in navigator){ addEventListener('load',()=>navigator.serviceWorker.register('./sw.js')); }
+let dp=null; const bar=document.getElementById('installBar');
+addEventListener('beforeinstallprompt',e=>{e.preventDefault(); dp=e; bar.style.display='flex';});
+document.getElementById('installBtn').onclick=async()=>{ if(!dp){alert('Use Chrome menu (⋮) → Install app.');return;} dp.prompt(); await dp.userChoice; dp=null; bar.style.display='none'; };
+
+// Share
+document.getElementById('shareBtn').onclick=async()=>{ const url=location.href, text='Install FriendTimeKeeper to track friends across time zones:'; if(navigator.share){try{await navigator.share({title:'FriendTimeKeeper',text,url});}catch(e){} } else {await navigator.clipboard?.writeText(url); alert('Link copied: '+url);} };
+
+// Settings
+const settingsBtn=document.getElementById('settingsBtn');
+const modal=document.getElementById('settingsModal');
+const saveSettings=document.getElementById('saveSettings');
+const closeSettings=document.getElementById('closeSettings');
+settingsBtn.onclick=()=>{ modal.style.display='flex'; const m=localStorage.getItem('ftk:tzMode')||'simplified'; document.querySelectorAll('input[name="tzmode"]').forEach(r=>r.checked=(r.value===m)); document.getElementById('iconStyle').value = localStorage.getItem('ftk:iconStyle')||'classic'; };
+closeSettings.onclick=()=>modal.style.display='none';
+saveSettings.onclick=()=>{ const v=document.querySelector('input[name="tzmode"]:checked').value; localStorage.setItem('ftk:tzMode', v); localStorage.setItem('ftk:iconStyle', document.getElementById('iconStyle').value); modal.style.display='none'; buildTimezoneSelect(); applyIcon(); };
+
+// Data + utils
+const LS='ftk:data:v1', LS_ICON='ftk:iconStyle';
+let state=JSON.parse(localStorage.getItem(LS)||'null')||[{id:uid(),name:'Sophie',tz:'Europe/London',notes:'London, UK'},{id:uid(),name:'Lucas',tz:'America/Sao_Paulo',notes:'São Paulo, Brazil'},{id:uid(),name:'Aiko',tz:'Asia/Tokyo',notes:'Tokyo, Japan'}]; save(state);
+function uid(){return Math.random().toString(36).slice(2,10);}
+function save(v){localStorage.setItem(LS,JSON.stringify(v)); render(); fillMulti();}
+function fmt(d,tz){return new Intl.DateTimeFormat(undefined,{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:tz}).format(d);}
+function hour(d,tz){return Number(new Intl.DateTimeFormat('en-GB',{hour:'2-digit',hour12:false,timeZone:tz}).format(d));}
+function status(h){if(h>=8&&h<22)return['Awake','pok']; if((h>=6&&h<8)||h>=22)return['Maybe','pwarn']; return['Asleep','pno'];}
+function esc(s){return (s||'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;','\\'':'&#39;'}[c]));}
+function offsetStr(tz){ const now=new Date(); const p=new Intl.DateTimeFormat('en-US',{timeZone:tz,timeZoneName:'shortOffset'}).formatToParts(now); const t=p.find(x=>x.type==='timeZoneName'); return t ? t.value.replace('GMT','UTC') : 'UTC±0'; }
+
+// Render friends
+const friendsEl=document.getElementById('friends'), myTZ=document.getElementById('myTZ');
+function render(){ myTZ.textContent=Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const now=new Date(); friendsEl.innerHTML='';
+  const sorted=[...state].sort((a,b)=>{const ha=hour(now,a.tz),hb=hour(now,b.tz); return ha===hb? a.name.localeCompare(b.name): ha-hb;});
+  sorted.forEach(f=>{ const [lab,cls]=status(hour(now,f.tz));
+    const el=document.createElement('div'); el.className='friend';
+    el.innerHTML=`<div><div class="name">${esc(f.name)}</div><div class="sub">${esc(f.notes||'')}</div>
+    <div class="row" style="margin-top:6px"><span class="badge">${esc(f.tz)}</span><span class="badge">${offsetStr(f.tz)}</span><span class="badge">${fmt(now,f.tz)}</span></div></div>
+    <div style="display:grid;gap:8px;align-content:start"><span class="pill ${cls}" style="text-align:center">${lab}</span>
+    <button class="btn" data-a="copy" data-id="${f.id}">Copy</button><button class="btn danger" data-a="del" data-id="${f.id}">Remove</button></div>`;
+    friendsEl.appendChild(el);
+  });
+  friendsEl.querySelectorAll('button').forEach(b=>b.onclick=e=>{ const id=e.currentTarget.dataset.id, a=e.currentTarget.dataset.a;
+    if(a==='del'){ state=state.filter(x=>x.id!==id); save(state); }
+    if(a==='copy'){ const f=state.find(x=>x.id===id); navigator.clipboard?.writeText(fmt(new Date(),f.tz)+' ('+f.tz+')'); e.currentTarget.textContent='Copied!'; setTimeout(()=>e.currentTarget.textContent='Copy',900); }
+  });
+}
+
+// Planner
+const multi=document.getElementById('multi'), awakeStart=document.getElementById('awakeStart'), awakeEnd=document.getElementById('awakeEnd'), plan=document.getElementById('plan'), planBtn=document.getElementById('planBtn');
+function fillMulti(){ multi.innerHTML=''; state.forEach(f=>{ const o=document.createElement('option'); o.value=f.id; o.textContent=f.name+' — '+f.tz; multi.appendChild(o); }); }
+function findOverlaps(ids,start='08:00',end='22:00'){ const chosen=state.filter(f=>ids.includes(f.id)); if(chosen.length<2)return[]; const now=new Date(); const [sH,sM]=start.split(':').map(Number), [eH,eM]=end.split(':').map(Number); const slots=[]; for(let step=0;step<=48;step++){ const st=new Date(now.getTime()+step*30*60000), en=new Date(st.getTime()+60*60000); const ok=chosen.every(fr=>{ const h1=hour(st,fr.tz), m1=Number(new Intl.DateTimeFormat('en-GB',{minute:'2-digit',timeZone:fr.tz}).format(st)), h2=hour(en,fr.tz), m2=Number(new Intl.DateTimeFormat('en-GB',{minute:'2-digit',timeZone:fr.tz}).format(en)); const sOK=(h1>sH||(h1===sH&&m1>=sM)), eOK=(h2<eH||(h2===eH&&m2<=eM)); return sOK&&eOK; }); if(ok) slots.push(st);} return slots.slice(0,10); }
+planBtn.onclick=()=>{ const ids=Array.from(multi.selectedOptions).map(o=>o.value); const s=awakeStart.value, e=awakeEnd.value; const slots=findOverlaps(ids,s,e); if(!slots.length){ plan.innerHTML='<div class="sub">No overlaps in the next 24h.</div>'; return; } plan.innerHTML=slots.map(dt=>{ const lines=ids.map(id=>{ const f=state.find(x=>x.id===id); return `<span class="badge">${f.name}: ${fmt(dt,f.tz)} (${f.tz})</span>`; }).join(' '); return `<div class="card" style="padding:10px">${lines}<div class="sub" style="margin-top:6px">Base slot: ${new Date(dt).toLocaleString()}</div></div>`; }).join(''); };
+
+// Tabs
+const tabBrowse=document.getElementById('tabBrowse'), tabManual=document.getElementById('tabManual');
+const paneBrowse=document.getElementById('paneBrowse'), paneManual=document.getElementById('paneManual');
+tabBrowse.onclick=()=>{tabBrowse.classList.add('active');tabManual.classList.remove('active');paneBrowse.style.display='block';paneManual.style.display='none';}
+tabManual.onclick=()=>{tabManual.classList.add('active');tabBrowse.classList.remove('active');paneBrowse.style.display='none';paneManual.style.display='block';}
+
+// Timezone lists
+const SIMPLE_GROUPS={
+  "Africa":[ "Africa/Abidjan","Africa/Cairo","Africa/Casablanca","Africa/Johannesburg","Africa/Nairobi","Africa/Lagos" ],
+  "Americas":[ "America/Anchorage","America/Chicago","America/Denver","America/Los_Angeles","America/Mexico_City","America/New_York","America/Sao_Paulo","America/Toronto","America/Bogota","America/Lima","America/Argentina/Buenos_Aires" ],
+  "Asia":[ "Asia/Bangkok","Asia/Dubai","Asia/Hong_Kong","Asia/Jakarta","Asia/Kolkata","Asia/Kuala_Lumpur","Asia/Manila","Asia/Seoul","Asia/Shanghai","Asia/Singapore","Asia/Taipei","Asia/Tokyo" ],
+  "Australia & NZ":[ "Australia/Perth","Australia/Darwin","Australia/Brisbane","Australia/Adelaide","Australia/Sydney","Australia/Melbourne","Pacific/Auckland","Pacific/Port_Moresby" ],
+  "Europe":[ "Europe/Dublin","Europe/Lisbon","Europe/London","Europe/Madrid","Europe/Paris","Europe/Berlin","Europe/Rome","Europe/Amsterdam","Europe/Stockholm","Europe/Athens","Europe/Moscow","Europe/Istanbul" ],
+  "Middle East":[ "Asia/Jerusalem","Asia/Baghdad","Asia/Tehran","Asia/Riyadh","Asia/Qatar","Asia/Kuwait" ],
+  "UTC":[ "UTC" ]
+};
+const tzSelect=document.getElementById('tzSelect'), tzManual=document.getElementById('tzManual'), tzFilter=document.getElementById('tzFilter');
+
+function buildTimezoneSelect(){
+  const mode = localStorage.getItem('ftk:tzMode') || 'simplified';
+  tzSelect.innerHTML='';
+  let groupsMap = {};
+  if (mode === 'complete' && typeof Intl.supportedValuesOf === 'function') {
+    const all = Intl.supportedValuesOf('timeZone'); // full list
+    all.forEach(z => { const key=z.split('/')[0]; (groupsMap[key] ||= []).push(z); });
+  } else {
+    groupsMap = JSON.parse(JSON.stringify(SIMPLE_GROUPS));
+  }
+  Object.keys(groupsMap).sort().forEach(label => {
+    const og=document.createElement('optgroup'); og.label=label;
+    groupsMap[label].sort().forEach(z=>{ const o=document.createElement('option'); o.value=z; o.textContent=z; og.appendChild(o); });
+    tzSelect.appendChild(og);
+  });
+  tzFilter.value=''; filterSelect('');
+}
+function filterSelect(q){
+  q=q.toLowerCase();
+  Array.from(tzSelect.options).forEach(o=>{ o.hidden = !o.value.toLowerCase().includes(q); });
+  Array.from(tzSelect.getElementsByTagName('optgroup')).forEach(g=>{
+    const any=Array.from(g.children).some(o=>!o.hidden);
+    g.hidden=!any;
+  });
+}
+tzFilter.addEventListener('input', ()=>filterSelect(tzFilter.value));
+
+// Add friend
+document.getElementById('addBtn').onclick=()=>{
+  const nm=document.getElementById('name').value.trim();
+  const useManual = paneManual.style.display==='block';
+  const tz = useManual ? tzManual.value.trim() : tzSelect.value;
+  const nt=document.getElementById('notes').value.trim();
+  if(!nm||!tz) return;
+  state.push({id:uid(),name:nm,tz,notes:nt});
+  document.getElementById('name').value=''; document.getElementById('notes').value=''; tzManual.value=''; tzFilter.value=''; filterSelect('');
+  save(state);
+};
+
+// Icon style
+function applyIcon(){ const v=localStorage.getItem('ftk:iconStyle')||'classic'; document.getElementById('iconStyle').value=v; document.getElementById('appIcon').src = v==='digital' ? 'icon-digital-192.png' : 'icon-192.png'; }
+
+function init(){ buildTimezoneSelect(); applyIcon(); render(); fillMulti(); setInterval(render,30000);
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone; if(standalone) bar.style.display='none';
+}
+init();
+</script>
+</body>
+</html>
