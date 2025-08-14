@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PWA Check — FriendTimeKeeper</title>
+  <meta name="theme-color" content="#0b101c">
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;background:#0b101c;color:#eaf1ff}
+    .wrap{max-width:900px;margin:20px auto;padding:0 16px}
+    .card{background:#111a2a;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+    h1{margin:0 0 8px 0;font-size:24px}
+    .ok{color:#10b981}.warn{color:#f59e0b}.bad{color:#ef4444}.muted{color:#9fb0d1}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    code{background:#0f1726;padding:2px 6px;border-radius:8px}
+    .log{background:#0f1726;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;font-family:ui-monospace,Consolas,Menlo,monospace;font-size:12px;white-space:pre-wrap}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>PWA Check — FriendTimeKeeper</h1>
+      <div id="checks" class="muted">Running checks…</div>
+      <div id="details" class="log" style="margin-top:10px"></div>
+      <p style="margin-top:12px">If any item shows red, refresh twice then try <b>/install.html</b>.</p>
+      <p><a href="./install.html" style="color:#7cc4ff">Go to Install Helper</a></p>
+    </div>
+  </div>
+
+<script>
+(async function(){
+  const checks = [];
+  const details = [];
+  const push = (label, ok, note='') => {
+    checks.push(`<div>${ok? '✅' : '❌'} ${label} ${note? '— '+note:''}</div>`);
+  };
+  // HTTPS check
+  push('HTTPS', location.protocol === 'https:' || location.hostname==='localhost');
+  // Manifest tag check
+  const hasManifestTag = !!document.querySelector('link[rel="manifest"]');
+  push('Manifest tag present', hasManifestTag);
+  // Manifest fetch
+  let manifestOk = false;
+  try{
+    const r = await fetch('manifest.webmanifest', {cache:'no-store'});
+    manifestOk = r.ok;
+    push('Manifest loads', r.ok, `HTTP ${r.status}`);
+    details.push('manifest: ' + await r.text());
+  } catch(e){ push('Manifest loads', false, String(e)); }
+  // Icons present
+  if (manifestOk) {
+    try{
+      const m = await fetch('manifest.webmanifest').then(r=>r.json());
+      const icons = (m.icons||[]).map(i=>i.src);
+      push('Manifest has icons', icons.length>0, icons.join(', '));
+    }catch(e){ push('Manifest has icons', false, 'parse failed'); }
+  }
+  // Service worker
+  const swSupport = 'serviceWorker' in navigator;
+  push('Service worker supported', swSupport);
+  if (swSupport) {
+    try{
+      const reg = await navigator.serviceWorker.getRegistration();
+      push('Service worker registered', !!reg, reg? 'scope: '+reg.scope : '');
+      if (!reg) {
+        // try to register now (in case index didn't yet)
+        try{
+          const r2 = await navigator.serviceWorker.register('./sw.js');
+          push('Registered now', !!r2, r2? 'scope: '+r2.scope : '');
+        }catch(e){
+          push('Registered now', false, String(e));
+        }
+      }
+    }catch(e){ push('Service worker registered', false, String(e)); }
+  }
+  // beforeinstallprompt probe
+  let bipFired = false;
+  window.addEventListener('beforeinstallprompt', ()=> { bipFired = true; });
+  // Give a moment
+  await new Promise(r=>setTimeout(r, 800));
+  push('beforeinstallprompt fired', bipFired, bipFired? '' : 'may need a refresh');
+  // Display
+  document.getElementById('checks').innerHTML = checks.join('');
+  document.getElementById('details').textContent = details.join('\n\n');
+})();
+</script>
+</body>
+</html>
