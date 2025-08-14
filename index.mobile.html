@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FriendTimeKeeper</title>
+<meta name="theme-color" content="#0b101c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+:root{
+  --bg:#0b101c; --card:#0f1726; --muted:#9fb0d1; --text:#eaf1ff; --accent:#7cc4ff;
+  --mint:#2dd4bf; --danger:#ef4444; --ok:#10b981; --border:rgba(255,255,255,.12);
+}
+*{box-sizing:border-box} html,body{height:100%} body{margin:0;background:var(--bg);color:var(--text);
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif;}
+.container{min-height:100%;display:flex;flex-direction:column}
+.header{position:sticky;top:0;z-index:10;background:#0b101cc0;backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--border)}
+.header .row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;gap:8px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+.btn{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 14px;
+  background:#12213a;border:1px solid var(--border);color:var(--text);border-radius:14px;font-weight:700}
+.btn.primary{background:linear-gradient(180deg,#2291ff,#1c7be0);border:none}
+.btn.ghost{background:transparent}
+.page{padding:12px 14px;display:grid;gap:14px;max-width:820px;margin:0 auto;width:100%}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px;box-shadow:0 8px 22px rgba(0,0,0,.35)}
+.h1{font-weight:800;font-size:18px;margin:0 0 6px}
+.sub{color:var(--muted);font-size:13px}
+/* Mobile-first list instead of table */
+.list{display:grid;gap:10px}
+.friend{display:grid;grid-template-columns:1fr auto;gap:10px;padding:12px;border:1px solid var(--border);border-radius:14px;background:#0e1a2c}
+.friend .name{font-weight:800}
+.friend .notes{color:var(--muted);font-size:12px}
+.friend .row{display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#0f1728;border:1px solid var(--border);font-size:12px}
+.pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;border:1px solid var(--border);font-size:12px}
+.pill.ok{background:rgba(16,185,129,.9);color:#031a12}
+.pill.warn{background:rgba(245,158,11,.9);color:#3b2502}
+.pill.no{background:rgba(239,68,68,.9);color:#3b0606}
+.input,select{width:100%;padding:14px;border-radius:14px;border:1px solid var(--border);background:#0f1726;color:var(--text)}
+.grid2{display:grid;gap:10px;grid-template-columns:1fr} @media(min-width:680px){.grid2{grid-template-columns:1fr 1fr}}
+/* Sticky install bar */
+.installbar{position:sticky;bottom:0;z-index:12;background:#0c1222f2;backdrop-filter:blur(8px);
+  border-top:1px solid var(--border);padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.installbar .txt{font-size:13px;color:var(--muted)}
+.footer{color:var(--muted);font-size:12px;text-align:center;padding:14px 8px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="row">
+      <div class="brand"><img id="appIcon" src="icon-192.png" alt="" style="width:32px;height:32px;border-radius:10px;border:1px solid var(--border)"> FriendTimeKeeper</div>
+      <div style="display:flex;gap:8px">
+        <button id="shareBtn" class="btn ghost">Share</button>
+        <button id="aboutBtn" class="btn ghost">About</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="sub">Welcome to FriendTimeKeeper — your friends’ time zones at a glance.</div>
+
+    <div class="card">
+      <div class="h1">Your Friends</div>
+      <div class="sub">Auto‑refreshes every 30s • Stored on your device</div>
+      <div id="friends" class="list" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card">
+      <div class="h1">Add Friend</div>
+      <div class="grid2">
+        <div><input id="name" class="input" placeholder="Name (e.g., Sam)"></div>
+        <div><select id="tz" class="input"></select></div>
+        <div><input id="notes" class="input" placeholder="Notes: city, platform, etc."></div>
+        <div><button id="addBtn" class="btn primary">Add</button></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="h1">Planner</div>
+      <div class="sub">Pick people & find 60‑min overlaps (next 24h).</div>
+      <div class="grid2">
+        <div><select id="multi" class="input" multiple style="min-height:140px"></select></div>
+        <div style="display:grid;gap:8px;grid-template-columns:1fr 1fr">
+          <input id="awakeStart" class="input" type="time" value="08:00">
+          <input id="awakeEnd" class="input" type="time" value="22:00">
+          <button id="planBtn" class="btn">Find Overlaps</button>
+        </div>
+      </div>
+      <div id="plan" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card">
+      <div class="h1">Settings</div>
+      <div class="grid2">
+        <div>
+          <label class="sub">App icon style</label>
+          <select id="iconStyle" class="input">
+            <option value="classic">Classic clock hands</option>
+            <option value="digital">Digital clock</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">Created by <strong>@Shade_Kn1ght</strong> • Your timezone: <span id="myTZ"></span></div>
+  </div>
+
+  <div id="installBar" class="installbar">
+    <div class="txt">Install FriendTimeKeeper for full‑screen & offline</div>
+    <button id="installBtn" class="btn primary">Install</button>
+  </div>
+</div>
+
+<script>
+// SW & install prompt
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));}
+let deferredPrompt=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e; showInstall(true);});
+function showInstall(v){ document.getElementById('installBar').classList.toggle('hidden', !v); }
+document.getElementById('installBtn').addEventListener('click', async()=>{
+  if(!deferredPrompt){ alert('If Install isn\'t showing, try Chrome menu (⋮) → Install app.'); return; }
+  deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; showInstall(false);
+});
+
+// Share
+document.getElementById('shareBtn').addEventListener('click', async()=>{
+  const url=location.href, text='Install FriendTimeKeeper to track friends across time zones:';
+  if(navigator.share){ try{ await navigator.share({title:'FriendTimeKeeper', text, url}); }catch(e){} }
+  else { await navigator.clipboard?.writeText(url); alert('Link copied: '+url); }
+});
+
+document.getElementById('aboutBtn').addEventListener('click', ()=>{
+  alert('FriendTimeKeeper\nCreated by @Shade_Kn1ght');
+});
+
+// App data
+const friendsEl=document.getElementById('friends');
+const nameEl=document.getElementById('name');
+const tzEl=document.getElementById('tz');
+const notesEl=document.getElementById('notes');
+const addBtn=document.getElementById('addBtn');
+const myTZ=document.getElementById('myTZ');
+const multi=document.getElementById('multi');
+const awakeStart=document.getElementById('awakeStart');
+const awakeEnd=document.getElementById('awakeEnd');
+const planBtn=document.getElementById('planBtn');
+const plan=document.getElementById('plan');
+const iconStyleSel=document.getElementById('iconStyle');
+const appIcon=document.getElementById('appIcon');
+const LS_KEY='ftk:data:v1', LS_ICON='ftk:iconStyle';
+
+let state=load()||seed();
+
+function seed(){ const s=[
+  {id:uid(), name:'Sophie', tz:'Europe/London', notes:'London, UK'},
+  {id:uid(), name:'Lucas', tz:'America/Sao_Paulo', notes:'São Paulo, Brazil'},
+  {id:uid(), name:'Aiko', tz:'Asia/Tokyo', notes:'Tokyo, Japan'}
+]; save(s); return s; }
+function load(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)); }catch{return null} }
+function save(f){ localStorage.setItem(LS_KEY, JSON.stringify(f)); render(); fillMulti(); }
+function uid(){ return Math.random().toString(36).slice(2,10); }
+function fmt(d,tz){ return new Intl.DateTimeFormat(undefined,{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:tz}).format(d); }
+function hour(d,tz){ return Number(new Intl.DateTimeFormat('en-GB',{hour:'2-digit',hour12:false,timeZone:tz}).format(d)); }
+function offsetStr(tz){ const now=new Date(); const p=new Intl.DateTimeFormat('en-US',{timeZone:tz,timeZoneName:'shortOffset'}).formatToParts(now); const t=p.find(x=>x.type==='timeZoneName'); return t ? t.value.replace('GMT','UTC') : 'UTC±0'; }
+function status(h){ if(h>=8&&h<22) return ['Awake','ok']; if((h>=6&&h<8)||h>=22) return ['Maybe','warn']; return ['Asleep','no']; }
+function esc(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+
+function populateTZ(){
+  const zones = (Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : ['UTC','Europe/London','Asia/Tokyo','America/New_York','Australia/Brisbane']);
+  zones.forEach(z=>{ const o=document.createElement('option'); o.value=z; o.textContent=z; tzEl.appendChild(o); });
+  tzEl.value = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+}
+
+function render(){
+  myTZ.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const now = new Date();
+  friendsEl.innerHTML='';
+  const sorted=[...state].sort((a,b)=>{const ha=hour(now,a.tz), hb=hour(now,b.tz); return ha===hb? a.name.localeCompare(b.name) : ha-hb;});
+  sorted.forEach(f=>{
+    const h = hour(now, f.tz);
+    const [lab, cls] = status(h);
+    const el = document.createElement('div');
+    el.className='friend';
+    el.innerHTML = `
+      <div>
+        <div class="name">${esc(f.name)}</div>
+        <div class="notes">${esc(f.notes||'')}</div>
+        <div class="row" style="margin-top:6px">
+          <span class="badge">${esc(f.tz)}</span>
+          <span class="badge"> ${offsetStr(f.tz)} </span>
+          <span class="badge"> <span class="mono">${fmt(now,f.tz)}</span> </span>
+        </div>
+      </div>
+      <div style="display:grid;gap:8px;align-content:start">
+        <span class="pill ${cls}" style="justify-content:center">${lab}</span>
+        <button class="btn" data-act="copy" data-id="${f.id}">Copy</button>
+        <button class="btn" data-act="del" data-id="${f.id}" style="background:#3a1420;border-color:#63202b">Remove</button>
+      </div>`;
+    friendsEl.appendChild(el);
+  });
+  friendsEl.querySelectorAll('button').forEach(b=>b.addEventListener('click',e=>{
+    const id=e.currentTarget.getAttribute('data-id'); const act=e.currentTarget.getAttribute('data-act');
+    if(act==='del'){ state=state.filter(x=>x.id!==id); save(state); }
+    if(act==='copy'){ const f=state.find(x=>x.id===id); navigator.clipboard?.writeText(fmt(new Date(),f.tz)+' ('+f.tz+')'); e.currentTarget.textContent='Copied!'; setTimeout(()=>e.currentTarget.textContent='Copy',900); }
+  }));
+}
+
+function fillMulti(){
+  multi.innerHTML=''; state.forEach(f=>{ const o=document.createElement('option'); o.value=f.id; o.textContent=f.name+' — '+f.tz; multi.appendChild(o); });
+}
+
+function addFriend(){
+  const nm=nameEl.value.trim(), tz=tzEl.value, nt=notesEl.value.trim();
+  if(!nm||!tz) return;
+  state.push({id:uid(), name:nm, tz, notes:nt});
+  nameEl.value=''; notesEl.value='';
+  save(state);
+}
+
+function findOverlaps(ids,start='08:00',end='22:00'){
+  const chosen=state.filter(f=>ids.includes(f.id)); if(chosen.length<2) return [];
+  const now=new Date(); const [sH,sM]=start.split(':').map(Number), [eH,eM]=end.split(':').map(Number);
+  const slots=[];
+  for(let step=0; step<=48; step++){
+    const st=new Date(now.getTime()+step*30*60000), en=new Date(st.getTime()+60*60000);
+    const ok=chosen.every(fr=>{
+      const h1=hour(st,fr.tz), m1=Number(new Intl.DateTimeFormat('en-GB',{minute:'2-digit',timeZone:fr.tz}).format(st));
+      const h2=hour(en,fr.tz), m2=Number(new Intl.DateTimeFormat('en-GB',{minute:'2-digit',timeZone:fr.tz}).format(en));
+      const startOK=(h1>sH||(h1===sH&&m1>=sM)), endOK=(h2<eH||(h2===eH&&m2<=eM));
+      return startOK && endOK;
+    });
+    if(ok) slots.push(st);
+  }
+  return slots.slice(0,10);
+}
+
+planBtn.addEventListener('click', ()=>{
+  const ids = Array.from(multi.selectedOptions).map(o=>o.value);
+  const s = awakeStart.value, e = awakeEnd.value;
+  const slots = findOverlaps(ids, s, e);
+  if(!slots.length){ plan.innerHTML='<div class="sub">No overlaps in the next 24h for that window.</div>'; return; }
+  plan.innerHTML = slots.map(dt=>{
+    const lines = ids.map(id=>{ const f=state.find(x=>x.id===id); return `<span class="badge">${f.name}: <span class="mono">${fmt(dt,f.tz)}</span> (${f.tz})</span>`;}).join(' ');
+    return `<div class="card" style="padding:10px">${lines}<div class="sub" style="margin-top:6px">Base slot: <span class="mono">${new Date(dt).toLocaleString()}</span></div></div>`;
+  }).join('');
+});
+
+function applyIcon(){
+  const v = localStorage.getItem(LS_ICON) || 'classic';
+  iconStyleSel.value = v;
+  appIcon.src = v==='digital' ? 'icon-digital-192.png' : 'icon-192.png';
+}
+iconStyleSel.addEventListener('change', ()=>{ localStorage.setItem(LS_ICON, iconStyleSel.value); applyIcon(); });
+
+document.getElementById('addBtn').addEventListener('click', addFriend);
+
+function init(){
+  populateTZ(); applyIcon(); render(); fillMulti(); setInterval(render, 30000);
+  // Hide install bar if already standalone
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  if (standalone) showInstall(false);
+}
+init();
+</script>
+</body>
+</html>
