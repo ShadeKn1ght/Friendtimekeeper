@@ -6,81 +6,90 @@
 <link rel='manifest' href='manifest.webmanifest'>
 <link rel='icon' type='image/png' href='favicon.png'>
 <style>
-:root{--bg:#0b101c;--card:#101a2a;--muted:#91a3c6;--text:#eaf1ff;--accent:#7cc4ff;--mint:#2dd4bf;--danger:#ef4444;--ok:#10b981;}
-*{box-sizing:border-box}body{margin:0;background:#0b101c;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif}
-.wrap{max-width:880px;margin:20px auto;padding:0 14px}
-.card{background:radial-gradient(1000px 420px at -20% -20%,rgba(124,196,255,.12),transparent 45%),radial-gradient(900px 480px at 120% 120%,rgba(45,212,191,.12),transparent 45%),var(--card);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:14px;box-shadow:0 10px 28px rgba(0,0,0,.35)}
-.title{font-weight:800;font-size:clamp(22px,5vw,34px);letter-spacing:.2px;display:flex;align-items:center;gap:10px}
-.subtitle{color:var(--muted);margin-top:6px}.row{display:flex;gap:10px;align-items:flex-start}.row>*{flex:1}
-button,select,input,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#0f1726;color:var(--text);outline:none}
-button{background:linear-gradient(180deg,#1c2a44,#172338);font-weight:700;cursor:pointer}
-button.primary{background:linear-gradient(180deg,#2291ff,#1c7be0);border:none}
-button.ghost{background:transparent}button.danger{background:linear-gradient(180deg,#ef4444,#dc2626);border:none}
-label{display:block;font-size:13px;color:var(--muted);margin:6px 0 4px}
-table{width:100%;border-collapse:separate;border-spacing:0}thead th{text-align:left;font-size:12px;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.08);padding:10px}tbody td{padding:10px;border-bottom:1px dashed rgba(255,255,255,.06)}
-.chip{display:inline-block;padding:6px 10px;border-radius:999px;background:#0f1728;border:1px solid rgba(255,255,255,.12);font-size:12px}
-.pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;border:1px solid rgba(255,255,255,.12)}
-.pill.ok{background:rgba(16,185,129,.9);color:#031a12}.pill.warn{background:rgba(245,158,11,.9);color:#3b2502}.pill.no{background:rgba(239,68,68,.9);color:#3b0606}
-.muted{color:var(--muted)}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'Roboto Mono',monospace}
-.headerbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.menu{display:flex;gap:8px}.right{display:flex;gap:8px;align-items:center}
-.mini{font-size:12px}.grid{display:grid;gap:12px}@media(min-width:860px){.grid{grid-template-columns:2fr 1fr}}.section-title{font-weight:700;margin:10px 0 6px}.mt8{margin-top:8px}.mt10{margin-top:10px}
-.welcome{border:1px dashed rgba(255,255,255,.15);border-radius:14px;padding:10px}.footer{color:var(--muted);font-size:12px;margin-top:14px;text-align:center}
-dialog{border:none;border-radius:16px;padding:0;overflow:hidden}dialog .dlg{padding:16px;background:var(--card);color:var(--text)}.icon-preview{width:40px;height:40px;border-radius:10px;background:#0a1020;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.08)}
+:root{
+  --bg:#0b101c;--card:#111a2a;--card2:#0f1726;--muted:#91a3c6;--text:#eaf1ff;
+  --accent:#7cc4ff;--mint:#2dd4bf;--danger:#ef4444;--ok:#10b981;--border:rgba(255,255,255,.08);
+}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif}
+.header{position:sticky;top:0;z-index:5;background:linear-gradient(180deg,#0b101c,#0b101c 70%,transparent);
+  backdrop-filter:saturate(120%) blur(6px);padding:12px 14px;border-bottom:1px solid var(--border)}
+.wrap{max-width:880px;margin:0 auto;padding:8px 14px 18px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+.actions{display:flex;gap:8px}
+.btn,.input,.select{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--border);background:var(--card2);color:var(--text)}
+.btn{background:linear-gradient(180deg,#1c2a44,#172338);font-weight:700;cursor:pointer}
+.btn.primary{background:linear-gradient(180deg,#2291ff,#1c7be0);border:none}
+.btn.ghost{background:transparent}
+.btn.danger{background:linear-gradient(180deg,#ef4444,#dc2626);border:none}
+label{display:block;font-size:13px;color:var(--muted);margin:6px 0 6px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.h1{font-size:18px;font-weight:700;margin:6px 0 2px}
+.sub{color:var(--muted);font-size:13px}
+.grid{display:grid;gap:12px} @media(min-width:860px){.grid{grid-template-columns:2fr 1fr}}
+.table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card2)}
+th,td{padding:12px;border-bottom:1px dashed var(--border);text-align:left} th{font-size:12px;color:var(--muted);background:#0e1626}
+.row{display:flex;gap:10px} .row>*{flex:1}
+.pill{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;border:1px solid var(--border);font-size:12px}
+.pill.ok{background:rgba(16,185,129,.9);color:#031a12}
+.pill.warn{background:rgba(245,158,11,.9);color:#3b2502}
+.pill.no{background:rgba(239,68,68,.9);color:#3b0606}
+.chip{display:inline-block;padding:6px 10px;border-radius:999px;background:#0f1728;border:1px solid var(--border);font-size:12px}
+.muted{color:var(--muted)} .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,'Roboto Mono',monospace}
+.footer{color:var(--muted);font-size:12px;margin:16px 0 24px;text-align:center}
 </style>
 </head><body>
-<div class='wrap'>
-  <div class='headerbar'>
-    <div class='title'>
-      <img id='appIcon' src='icon-192.png' alt='' style='width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,.12)'>
-      FriendTimeKeeper
-    </div>
-    <div class='right'>
-      <button id='shareBtn' class='ghost'>Share App</button>
-      <button id='aboutBtn' class='ghost'>About</button>
-      <button id='installBtn'>Install</button>
-    </div>
-  </div>
-  <div class='subtitle'>Welcome to FriendTimeKeeper — your friends’ time zones at a glance.</div>
-
-  <div class='grid mt10'>
-    <div class='card'>
-      <div class='welcome'><div class='mini muted'>Tip: Tap “Install” to add it to your Home screen. Works offline once opened.</div></div>
-      <div class='section-title'>Your Friends</div>
-      <div class='mini muted'>Auto‑refreshes every 30s • Stored on your device</div>
-      <div class='mt8' style='border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden'>
-        <table><thead><tr><th>Name</th><th>Timezone</th><th>Local</th><th>Status</th><th>Actions</th></tr></thead><tbody id='rows'></tbody></table>
-      </div>
-      <div class='section-title mt10'>Add Friend</div>
-      <div class='row'>
-        <div><label for='name'>Name</label><input id='name' placeholder='e.g., Sam'></div>
-        <div><label for='tz'>Timezone</label><select id='tz'></select></div>
-      </div>
-      <div class='row mt8'>
-        <div><label for='notes'>Notes (optional)</label><input id='notes' placeholder='city, platform, etc.'></div>
-        <div><label>&nbsp;</label><button id='addBtn' class='primary'>Add</button></div>
-      </div>
-    </div>
-
-    <div class='card'>
-      <div class='section-title'>Planner</div>
-      <div class='mini muted'>Pick people, we’ll find 60‑min overlaps in the next 24h.</div>
-      <div class='row mt8'><select id='multi' multiple style='min-height:120px'></select></div>
-      <div class='row mt8'>
-        <div><label>Awake start</label><input id='awakeStart' type='time' value='08:00'></div>
-        <div><label>Awake end</label><input id='awakeEnd' type='time' value='22:00'></div>
-        <div><label>&nbsp;</label><button id='planBtn'>Find Overlaps</button></div>
-      </div>
-      <div id='plan' class='mt8'></div>
-
-      <div class='section-title mt10'>Settings</div>
-      <div class='row'><div><label>App icon style</label><select id='iconStyle'><option value='classic'>Classic clock hands</option><option value='digital'>Digital clock</option></select></div></div>
+  <div class="header">
+    <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div class="brand"><img id="appIcon" src="icon-192.png" width="32" height="32" style="border-radius:10px;border:1px solid var(--border)"> FriendTimeKeeper</div>
+      <div class="actions"><button id="shareBtn" class="btn ghost">Share</button><button id="aboutBtn" class="btn ghost">About</button><button id="installBtn" class="btn">Install</button></div>
     </div>
   </div>
 
-  <div class='footer'>Created by <strong>@Shade_Kn1ght</strong> • Your timezone: <span id='myTZ' class='mono'></span></div>
-</div>
+  <div class="wrap">
+    <div class="sub" style="margin-bottom:10px">Welcome to FriendTimeKeeper — your friends’ time zones at a glance.</div>
 
-<dialog id='aboutDialog'><div class='dlg'><h3>About FriendTimeKeeper</h3><p class='muted'>Track friends worldwide, see their local time, and find overlap windows that work for everyone. Works offline and installable to your Home screen.</p><p>Created by <strong>@Shade_Kn1ght</strong>.</p><div class='row'><div><label>Current icon preview</label><div class='icon-preview'><img id='iconPreview' src='icon-192.png' style='width:30px;height:30px;border-radius:8px'></div></div><div><label>&nbsp;</label><button id='closeAbout'>Close</button></div></div></div></dialog>
+    <div class="grid">
+      <div class="card">
+        <div class="h1">Your Friends</div>
+        <div class="sub">Auto-refreshes every 30s • Stored on your device</div>
+
+        <table class="table" style="margin-top:10px">
+          <thead><tr><th>Name</th><th>Timezone</th><th>Local</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+
+        <div class="h1" style="margin-top:14px">Add Friend</div>
+        <div class="row">
+          <div><label for="name">Name</label><input id="name" class="input" placeholder="e.g., Sam"></div>
+          <div><label for="tz">Timezone</label><select id="tz" class="select"></select></div>
+        </div>
+        <div class="row">
+          <div><label for="notes">Notes (optional)</label><input id="notes" class="input" placeholder="city, platform, etc."></div>
+          <div><label>&nbsp;</label><button id="addBtn" class="btn primary">Add</button></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="h1">Planner</div>
+        <div class="sub">Pick people, we’ll find 60-min overlaps in the next 24h.</div>
+        <div class="row" style="margin-top:8px"><select id="multi" class="select" multiple style="min-height:120px"></select></div>
+        <div class="row">
+          <div><label>Awake start</label><input id="awakeStart" class="input" type="time" value="08:00"></div>
+          <div><label>Awake end</label><input id="awakeEnd" class="input" type="time" value="22:00"></div>
+          <div><label>&nbsp;</label><button id="planBtn" class="btn">Find Overlaps</button></div>
+        </div>
+        <div id="plan" style="margin-top:8px"></div>
+
+        <div class="h1" style="margin-top:14px">Settings</div>
+        <div class="row">
+          <div><label>App icon style</label><select id="iconStyle" class="select"><option value="classic">Classic clock hands</option><option value="digital">Digital clock</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">Created by <strong>@Shade_Kn1ght</strong> • Your timezone: <span id="myTZ" class="mono"></span></div>
+  </div>
 
 <script>
 if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));}
@@ -88,7 +97,10 @@ let deferredPrompt=null;const installBtn=document.getElementById('installBtn');
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;installBtn.style.display='inline-block';});
 installBtn.addEventListener('click',async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBtn.style.display='none';});
 
-const rows=document.getElementById('rows'),nameEl=document.getElementById('name'),tzEl=document.getElementById('tz'),notesEl=document.getElementById('notes'),addBtn=document.getElementById('addBtn'),multi=document.getElementById('multi'),awakeStart=document.getElementById('awakeStart'),awakeEnd=document.getElementById('awakeEnd'),planBtn=document.getElementById('planBtn'),plan=document.getElementById('plan'),myTZ=document.getElementById('myTZ'),iconStyleSel=document.getElementById('iconStyle'),appIcon=document.getElementById('appIcon'),iconPreview=document.getElementById('iconPreview'),aboutBtn=document.getElementById('aboutBtn'),aboutDialog=document.getElementById('aboutDialog'),closeAbout=document.getElementById('closeAbout'),shareBtn=document.getElementById('shareBtn');
+const rows=document.getElementById('rows'),nameEl=document.getElementById('name'),tzEl=document.getElementById('tz'),notesEl=document.getElementById('notes'),
+addBtn=document.getElementById('addBtn'),multi=document.getElementById('multi'),awakeStart=document.getElementById('awakeStart'),
+awakeEnd=document.getElementById('awakeEnd'),planBtn=document.getElementById('planBtn'),plan=document.getElementById('plan'),
+myTZ=document.getElementById('myTZ'),iconStyleSel=document.getElementById('iconStyle'),appIcon=document.getElementById('appIcon');
 const LS_KEY='ftk:data:v1', LS_ICON='ftk:iconStyle'; let state=load()||seed();
 function seed(){const s=[{id:uid(),name:'Sophie',tz:'Europe/London',notes:'London, UK'},{id:uid(),name:'Lucas',tz:'America/Sao_Paulo',notes:'São Paulo, Brazil'},{id:uid(),name:'Aiko',tz:'Asia/Tokyo',notes:'Tokyo, Japan'}]; save(s); return s;}
 function load(){try{return JSON.parse(localStorage.getItem(LS_KEY));}catch{return null}}
@@ -98,19 +110,19 @@ function fmt(d,tz){return new Intl.DateTimeFormat(undefined,{hour:'2-digit',minu
 function hour(d,tz){return Number(new Intl.DateTimeFormat('en-GB',{hour:'2-digit',hour12:false,timeZone:tz}).format(d));}
 function offsetStr(tz){const now=new Date();const p=new Intl.DateTimeFormat('en-US',{timeZone:tz,timeZoneName:'shortOffset'}).formatToParts(now);const t=p.find(x=>x.type==='timeZoneName');return t?t.value.replace('GMT','UTC'):'UTC±0';}
 function status(h){if(h>=8&&h<22)return['Awake','ok'];if((h>=6&&h<8)||h>=22)return['Maybe','warn'];return['Asleep','no'];}
-function esc(s){return (s||'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));}
+function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));}
 function populateTZ(){const zones=(Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):['UTC','Europe/London','Asia/Tokyo','America/New_York','Australia/Brisbane']); zones.forEach(z=>{const o=document.createElement('option');o.value=z;o.textContent=z;tzEl.appendChild(o);}); tzEl.value=Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';}
-function render(){myTZ.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone; const now=new Date(); rows.innerHTML=''; const sorted=[...state].sort((a,b)=>{const ha=hour(now,a.tz),hb=hour(now,b.tz); return ha===hb? a.name.localeCompare(b.name): ha-hb;}); sorted.forEach(f=>{const h=hour(now,f.tz); const [lab,cls]=status(h); const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${esc(f.name)}</strong><div class='mini muted'>${esc(f.notes||'')}</div></td><td class='muted'>${esc(f.tz)} <span class='chip mono'>${offsetStr(f.tz)}</span></td><td class='mono'>${fmt(now,f.tz)}</td><td><span class='pill ${cls}'>${lab}</span></td><td><div class='menu'><button data-act='copy' data-id='${f.id}'>Copy time</button><button data-act='del' data-id='${f.id}' class='danger'>Remove</button></div></td>`; rows.appendChild(tr); }); rows.querySelectorAll('button').forEach(b=>b.addEventListener('click',e=>{const id=e.currentTarget.getAttribute('data-id');const act=e.currentTarget.getAttribute('data-act'); if(act==='del'){state=state.filter(x=>x.id!==id); save(state);} if(act==='copy'){const f=state.find(x=>x.id===id); navigator.clipboard?.writeText(fmt(new Date(),f.tz)+' ('+f.tz+')'); e.currentTarget.textContent='Copied!'; setTimeout(()=>e.currentTarget.textContent='Copy time',900); }}));}
+function render(){myTZ.textContent=Intl.DateTimeFormat().resolvedOptions().timeZone; const now=new Date(); rows.innerHTML=''; const sorted=[...state].sort((a,b)=>{const ha=hour(now,a.tz),hb=hour(now,b.tz); return ha===hb? a.name.localeCompare(b.name): ha-hb;}); sorted.forEach(f=>{const h=hour(now,f.tz); const [lab,cls]=status(h); const tr=document.createElement('tr'); tr.innerHTML=`<td><strong>${esc(f.name)}</strong><div class='muted' style='font-size:12px'>${esc(f.notes||'')}</div></td><td class='muted'>${esc(f.tz)} <span class='chip mono'>${offsetStr(f.tz)}</span></td><td class='mono'>${fmt(now,f.tz)}</td><td><span class='pill ${cls}'>${lab}</span></td><td><div class='row' style='gap:8px'><button data-act='copy' data-id='${f.id}' class='btn'>Copy</button><button data-act='del' data-id='${f.id}' class='btn danger'>Remove</button></div></td>`; rows.appendChild(tr); }); rows.querySelectorAll('button').forEach(b=>b.addEventListener('click',e=>{const id=e.currentTarget.getAttribute('data-id');const act=e.currentTarget.getAttribute('data-act'); if(act==='del'){state=state.filter(x=>x.id!==id); save(state);} if(act==='copy'){const f=state.find(x=>x.id===id); navigator.clipboard?.writeText(fmt(new Date(),f.tz)+' ('+f.tz+')'); e.currentTarget.textContent='Copied!'; setTimeout(()=>e.currentTarget.textContent='Copy',900); }}));}
 function refresh(){render(); fillMulti();}
 function fillMulti(){multi.innerHTML=''; state.forEach(f=>{const o=document.createElement('option'); o.value=f.id; o.textContent=f.name+' — '+f.tz; multi.appendChild(o);});}
 function addFriend(){const nm=nameEl.value.trim(), tz=tzEl.value, nt=notesEl.value.trim(); if(!nm||!tz)return; state.push({id:uid(),name:nm,tz,notes:nt}); nameEl.value='';notesEl.value=''; save(state);}
-function findOverlaps(ids,start='08:00',end='22:00'){const chosen=state.filter(f=>ids.includes(f.id)); if(chosen.length<2)return[]; const now=new Date(); const [sH,sM]=start.split(':').map(Number), [eH,eM]=end.split(':').map(Number); const slots=[]; for(let step=0;step<=48;step++){const st=new Date(now.getTime()+step*30*60000), en=new Date(st.getTime()+60*60000); const ok=chosen.every(fr=>{const h1=hour(st,fr.tz), m1=Number(new Intl.DateTimeFormat('en-GB',{minute:'2-digit',timeZone:fr.tz}).format(st)), h2=hour(en,fr.tz), m2=Number(new Intl.DateTimeFormat('en-GB',{minute:'2-digit',timeZone:fr.tz}).format(en)); const startOK=(h1>sH||(h1===sH&&m1>=sM)), endOK=(h2<eH||(h2===eH&&m2<=eM)); return startOK&&endOK;}); if(ok) slots.push(st);} return slots.slice(0,10);}
+function findOverlaps(ids,start='08:00',end='22:00'){const chosen=state.filter(f=>ids.includes(f.id)); if(chosen.length<2)return[]; const now=new Date(); const [sH,sM]=start.split(':' ).map(Number), [eH,eM]=end.split(':' ).map(Number); const slots=[]; for(let step=0;step<=48;step++){const st=new Date(now.getTime()+step*30*60000), en=new Date(st.getTime()+60*60000); const ok=chosen.every(fr=>{const h1=hour(st,fr.tz), m1=Number(new Intl.DateTimeFormat('en-GB',{minute:'2-digit',timeZone:fr.tz}).format(st)), h2=hour(en,fr.tz), m2=Number(new Intl.DateTimeFormat('en-GB',{minute:'2-digit',timeZone:fr.tz}).format(en)); const startOK=(h1>sH||(h1===sH&&m1>=sM)), endOK=(h2<eH||(h2===eH&&m2<=eM)); return startOK&&endOK;}); if(ok) slots.push(st);} return slots.slice(0,10);}
 shareBtn.addEventListener('click', async()=>{const url=location.href, text='Install FriendTimeKeeper to track friends across time zones:'; if(navigator.share){try{await navigator.share({title:'FriendTimeKeeper', text, url});}catch(e){}} else {await navigator.clipboard?.writeText(url); alert('Link copied: '+url);} });
-function applyIcon(){const v=localStorage.getItem(LS_ICON)||'classic'; iconStyleSel.value=v; const src=v==='digital'?'icon-digital-192.png':'icon-192.png'; appIcon.src=src; iconPreview.src=src;}
+function applyIcon(){const v=localStorage.getItem(LS_ICON)||'classic'; iconStyleSel.value=v; const src=v==='digital'?'icon-digital-192.png':'icon-192.png'; appIcon.src=src;}
 iconStyleSel.addEventListener('change', ()=>{localStorage.setItem(LS_ICON, iconStyleSel.value); applyIcon();});
-aboutBtn.addEventListener('click', ()=>aboutDialog.showModal()); closeAbout.addEventListener('click', ()=>aboutDialog.close());
+document.getElementById('aboutBtn').addEventListener('click', ()=>alert('FriendTimeKeeper\nCreated by @Shade_Kn1ght'));
 addBtn.addEventListener('click', addFriend);
-planBtn.addEventListener('click', ()=>{const ids=Array.from(multi.selectedOptions).map(o=>o.value); const s=document.getElementById('awakeStart').value; const e=document.getElementById('awakeEnd').value; const slots=findOverlaps(ids,s,e); if(!slots.length){plan.innerHTML='<div class="mini muted">No overlaps in the next 24h for that window.</div>'; return;} plan.innerHTML=slots.map(dt=>{const lines=ids.map(id=>{const f=state.find(x=>x.id===id); return `<span class="chip">${f.name}: <span class="mono">${fmt(dt,f.tz)}</span> (${f.tz})</span>`;}).join(' '); return `<div style="padding:10px;border:1px solid rgba(255,255,255,.1);border-radius:12px;margin-bottom:6px"><div class="mini muted">Base slot: <span class="mono">${new Date(dt).toLocaleString()}</span></div>${lines}</div>`;}).join('');});
-function init(){populateTZ(); applyIcon(); refresh(); setInterval(render,30000);} init();
+planBtn.addEventListener('click', ()=>{const ids=Array.from(multi.selectedOptions).map(o=>o.value); const s=document.getElementById('awakeStart').value; const e=document.getElementById('awakeEnd').value; const slots=findOverlaps(ids,s,e); if(!slots.length){plan.innerHTML='<div class="sub">No overlaps in the next 24h for that window.</div>'; return;} plan.innerHTML=slots.map(dt=>{const lines=ids.map(id=>{const f=state.find(x=>x.id===id); return `<span class="chip">${f.name}: <span class="mono">${fmt(dt,f.tz)}</span> (${f.tz})</span>`;}).join(' '); return `<div class="card" style="padding:10px"> <div class="sub">Base slot: <span class="mono">${new Date(dt).toLocaleString()}</span></div>${lines}</div>`;}).join('');});
+function init(){const z=(Intl.supportedValuesOf?Intl.supportedValuesOf('timeZone'):['UTC','Europe/London','Asia/Tokyo','America/New_York','Australia/Brisbane']); z.forEach(zz=>{const o=document.createElement('option');o.value=zz;o.textContent=zz;tzEl.appendChild(o);}); tzEl.value=Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'; applyIcon(); refresh(); setInterval(render,30000);} init();
 </script>
 </body></html>
