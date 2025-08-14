@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FriendTimeKeeper</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#0b101c; color:#fff; margin:0; padding:0; }
+    header { display:flex; justify-content:space-between; align-items:center; padding:10px; background:#0f1726; }
+    h1 { font-size:18px; margin:0; }
+    button { background:#2dd4bf; border:none; padding:8px 12px; border-radius:6px; cursor:pointer; }
+    .container { padding:15px; }
+    .card { background:#1a2332; padding:15px; border-radius:10px; margin-bottom:10px; }
+    select, input { width:100%; padding:8px; margin-top:6px; border-radius:6px; border:none; }
+    .tabs { display:flex; margin-bottom:10px; }
+    .tab { flex:1; text-align:center; padding:8px; cursor:pointer; background:#1f2937; }
+    .tab.active { background:#2dd4bf; color:#000; }
+    #settingsPanel { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); color:#fff; padding:20px; }
+    #settingsPanel .card { background:#111827; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FriendTimeKeeper</h1>
+    <div>
+      <button onclick="toggleSettings()">⚙️ Settings</button>
+      <button>Share</button>
+    </div>
+  </header>
+  <div class="container">
+    <div class="card">
+      <h2>Add Friend</h2>
+      <input type="text" id="friendName" placeholder="Name (e.g., Sam)">
+      <div class="tabs">
+        <div id="browseTab" class="tab active" onclick="switchTab('browse')">Browse timezones</div>
+        <div id="manualTab" class="tab" onclick="switchTab('manual')">Type manually</div>
+      </div>
+      <div id="browsePanel">
+        <select id="timezoneSelect">
+          <option value="">Select timezone...</option>
+          <optgroup label="Australia">
+            <option>Australia/Sydney</option>
+            <option>Australia/Brisbane</option>
+            <option>Australia/Perth</option>
+          </optgroup>
+          <optgroup label="America">
+            <option>America/New_York</option>
+            <option>America/Chicago</option>
+            <option>America/Los_Angeles</option>
+          </optgroup>
+          <optgroup label="Europe">
+            <option>Europe/London</option>
+            <option>Europe/Paris</option>
+            <option>Europe/Berlin</option>
+          </optgroup>
+          <optgroup label="Asia">
+            <option>Asia/Tokyo</option>
+            <option>Asia/Shanghai</option>
+            <option>Asia/Singapore</option>
+          </optgroup>
+        </select>
+      </div>
+      <div id="manualPanel" style="display:none;">
+        <input type="text" id="manualTimezone" placeholder="Type full timezone (e.g., Europe/Rome)">
+      </div>
+      <input type="text" id="friendNotes" placeholder="Notes: city, platform, etc.">
+      <button onclick="addFriend()">Add</button>
+    </div>
+    <div class="card">
+      <h2>Your Friends</h2>
+      <ul id="friendsList"></ul>
+    </div>
+  </div>
+
+  <div id="settingsPanel">
+    <div class="card">
+      <h2>Settings</h2>
+      <label><input type="radio" name="mode" value="simplified" checked> Simplified (popular)</label><br>
+      <label><input type="radio" name="mode" value="complete"> Complete (all zones)</label><br><br>
+      <button onclick="saveSettings()">Save & Close</button>
+    </div>
+  </div>
+
+<script>
+function switchTab(tab) {
+  document.getElementById("browsePanel").style.display = tab === "browse" ? "block" : "none";
+  document.getElementById("manualPanel").style.display = tab === "manual" ? "block" : "none";
+  document.getElementById("browseTab").classList.toggle("active", tab === "browse");
+  document.getElementById("manualTab").classList.toggle("active", tab === "manual");
+}
+function addFriend() {
+  let name = document.getElementById("friendName").value;
+  let tz = document.getElementById("timezoneSelect").value || document.getElementById("manualTimezone").value;
+  let notes = document.getElementById("friendNotes").value;
+  if(!name || !tz) { alert("Please enter name and timezone."); return; }
+  let li = document.createElement("li");
+  li.textContent = name + " - " + tz + (notes ? " ("+notes+")" : "");
+  document.getElementById("friendsList").appendChild(li);
+}
+function toggleSettings() {
+  document.getElementById("settingsPanel").style.display = "block";
+}
+function saveSettings() {
+  let mode = document.querySelector('input[name="mode"]:checked').value;
+  localStorage.setItem("mode", mode);
+  document.getElementById("settingsPanel").style.display = "none";
+  alert("Settings saved: " + mode);
+}
+</script>
+</body>
+</html>
