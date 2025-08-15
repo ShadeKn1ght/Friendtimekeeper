@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FriendTimeKeeper</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+    }
+    header h1 {
+      font-size: 1.2rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+    header button {
+      margin-left: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      background: #21262d;
+      color: #e6edf3;
+      cursor: pointer;
+    }
+    header button:hover {
+      background: #30363d;
+    }
+    main {
+      padding: 1rem;
+    }
+    section {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      padding: 1rem;
+    }
+    h2 {
+      margin-top: 0;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #30363d;
+      background: #0d1117;
+      color: #e6edf3;
+    }
+    button.action {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.5rem;
+      border: none;
+      border-radius: 6px;
+      background: #238636;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button.action:hover {
+      background: #2ea043;
+    }
+    #settingsModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    #settingsContent {
+      background: #161b22;
+      padding: 1rem;
+      border-radius: 10px;
+      width: 300px;
+    }
+    #settingsContent h3 {
+      margin-top: 0;
+    }
+    #settingsContent label {
+      display: block;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FriendTimeKeeper</h1>
+    <div>
+      <button id="shareBtn">Share</button>
+      <button id="settingsBtn">Settings</button>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <h2>Your Friends</h2>
+      <div id="friendsList">Mobile cards • Stored on your device</div>
+    </section>
+
+    <section>
+      <h2>Add Friend</h2>
+      <input type="text" id="friendName" placeholder="Name (e.g., Sam)" />
+      <input type="text" id="timezoneFilter" placeholder="Filter (e.g., Sydney, London, Tokyo)" />
+      <select id="timezoneSelect"></select>
+      <input type="text" id="notes" placeholder="Notes: city, platform, etc." />
+      <button class="action" id="addFriend">Add</button>
+    </section>
+
+    <section>
+      <h2>Planner</h2>
+      <div id="planner">0 selected</div>
+      <label>From: <input type="time" id="fromTime" value="08:00" /></label>
+      <label>To: <input type="time" id="toTime" value="22:00" /></label>
+      <button class="action" id="findOverlaps">Find Overlaps</button>
+    </section>
+  </main>
+
+  <div id="settingsModal">
+    <div id="settingsContent">
+      <h3>Settings</h3>
+      <label><input type="checkbox" id="simpleList" /> Use simplified timezone list</label>
+      <label>
+        Icon Style:
+        <select id="iconStyle">
+          <option value="classic">Classic</option>
+          <option value="digital">Digital</option>
+        </select>
+      </label>
+      <button class="action" id="closeSettings">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const timezones = Intl.supportedValuesOf('timeZone');
+    const tzSelect = document.getElementById('timezoneSelect');
+    const tzFilter = document.getElementById('timezoneFilter');
+
+    function populateTimezones(filter = '') {
+      tzSelect.innerHTML = '';
+      const filtered = timezones.filter(tz => tz.toLowerCase().includes(filter.toLowerCase()));
+      filtered.forEach(tz => {
+        const opt = document.createElement('option');
+        opt.value = tz;
+        opt.textContent = tz;
+        tzSelect.appendChild(opt);
+      });
+    }
+    tzFilter.addEventListener('input', () => populateTimezones(tzFilter.value));
+    populateTimezones();
+
+    document.getElementById('addFriend').addEventListener('click', () => {
+      const name = document.getElementById('friendName').value;
+      const tz = tzSelect.value;
+      const notes = document.getElementById('notes').value;
+      if (!name || !tz) return alert('Please enter name and timezone');
+      const li = document.createElement('div');
+      li.textContent = `${name} - ${tz} (${notes})`;
+      document.getElementById('friendsList').appendChild(li);
+    });
+
+    document.getElementById('findOverlaps').addEventListener('click', () => {
+      alert('Overlap calculation coming soon!');
+    });
+
+    document.getElementById('shareBtn').addEventListener('click', async () => {
+      if (navigator.share) {
+        await navigator.share({ title: 'FriendTimeKeeper', url: window.location.href });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert('Link copied!');
+      }
+    });
+
+    const settingsModal = document.getElementById('settingsModal');
+    document.getElementById('settingsBtn').addEventListener('click', () => {
+      settingsModal.style.display = 'flex';
+    });
+    document.getElementById('closeSettings').addEventListener('click', () => {
+      settingsModal.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
